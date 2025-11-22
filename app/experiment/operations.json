@@ -1,0 +1,627 @@
+{
+  "atomic_operations": [
+    {
+      "id": 1,
+      "name": "ADD_SUBSTANCE",
+      "category": "SUBSTANCE_OPERATIONS",
+      "parameters": [
+        {"name": "substance_name", "type": "string", "required": true},
+        {"name": "volume", "type": "number + unit", "required": true, "units": ["µL", "mL", "L"]},
+        {"name": "concentration", "type": "number + unit", "required": false},
+        {"name": "container", "type": "string", "required": true, "options": ["tube", "flask", "plate", "etc"]},
+        {"name": "mixing_method", "type": "string", "required": false, "options": ["vortex", "invert", "pipette"]}
+      ],
+      "example": "ADD_SUBSTANCE(\"CTAB buffer\", 5, \"mL\", container=\"15mL tube\")"
+    },
+    {
+      "id": 2,
+      "name": "ADD_SOLID",
+      "category": "SUBSTANCE_OPERATIONS",
+      "parameters": [
+        {"name": "substance_name", "type": "string", "required": true},
+        {"name": "amount", "type": "number + unit", "required": true, "units": ["mg", "g", "kg"]},
+        {"name": "container", "type": "string", "required": true}
+      ],
+      "example": "ADD_SOLID(\"agar\", 15, \"g\", container=\"flask\")"
+    },
+    {
+      "id": 3,
+      "name": "REMOVE_SUBSTANCE",
+      "category": "SUBSTANCE_OPERATIONS",
+      "parameters": [
+        {"name": "removal_method", "type": "string", "required": true, "options": ["pipette", "decant", "aspirate"]},
+        {"name": "volume", "type": "mixed", "required": false, "options": ["number + unit", "supernatant", "all", "pellet"]},
+        {"name": "keep_remainder", "type": "boolean", "required": false}
+      ],
+      "example": "REMOVE_SUBSTANCE(\"decant\", \"supernatant\", keep_pellet=true)"
+    },
+    {
+      "id": 4,
+      "name": "SET_TEMPERATURE",
+      "category": "TEMPERATURE_OPERATIONS",
+      "parameters": [
+        {"name": "temperature", "type": "number + unit", "required": true, "units": ["°C"]},
+        {"name": "duration", "type": "number + unit", "required": true, "units": ["min", "h", "overnight"]},
+        {"name": "device", "type": "string", "required": true, "options": ["incubator", "water_bath", "heat_block", "ice", "freezer", "fridge"]},
+        {"name": "shaking", "type": "number + rpm", "required": false}
+      ],
+      "example": "SET_TEMPERATURE(55, \"°C\", 60, \"min\", device=\"incubator\")"
+    },
+    {
+      "id": 5,
+      "name": "COOL",
+      "category": "TEMPERATURE_OPERATIONS",
+      "parameters": [
+        {"name": "target_temp", "type": "mixed", "required": true, "options": ["number + unit", "RT", "ice", "4°C", "-20°C", "-80°C"]},
+        {"name": "duration", "type": "number + unit", "required": true},
+        {"name": "method", "type": "string", "required": true, "options": ["bench", "ice", "fridge", "freezer"]}
+      ],
+      "example": "COOL(\"ice\", 15, \"min\")"
+    },
+    {
+      "id": 6,
+      "name": "MIX",
+      "category": "MIXING_OPERATIONS",
+      "parameters": [
+        {"name": "method", "type": "string", "required": true, "options": ["vortex", "invert", "shake", "stir", "pipette"]},
+        {"name": "duration", "type": "number + unit", "required": true},
+        {"name": "intensity", "type": "string", "required": false, "options": ["gentle", "moderate", "vigorous", "or rpm"]}
+      ],
+      "example": "MIX(\"vortex\", 30, \"sec\", intensity=\"vigorous\")"
+    },
+    {
+      "id": 7,
+      "name": "RESUSPEND",
+      "category": "MIXING_OPERATIONS",
+      "parameters": [
+        {"name": "substance_added", "type": "string", "required": true},
+        {"name": "volume", "type": "number + unit", "required": true},
+        {"name": "method", "type": "string", "required": true, "options": ["pipette", "vortex", "gentle_swirl"]}
+      ],
+      "example": "RESUSPEND(\"MQ water\", 300, \"µL\", method=\"pipette\")"
+    },
+    {
+      "id": 8,
+      "name": "CENTRIFUGE",
+      "category": "SEPARATION_OPERATIONS",
+      "parameters": [
+        {"name": "speed", "type": "number + unit", "required": true, "units": ["g", "rpm"]},
+        {"name": "duration", "type": "number + unit", "required": true},
+        {"name": "temperature", "type": "mixed", "required": false, "options": ["number + °C", "cooled", "RT"]}
+      ],
+      "example": "CENTRIFUGE(13000, \"g\", 15, \"min\", temperature=4)"
+    },
+    {
+      "id": 9,
+      "name": "FILTER",
+      "category": "SEPARATION_OPERATIONS",
+      "parameters": [
+        {"name": "filter_size", "type": "number + unit", "required": true, "units": ["µm", "kDa"]},
+        {"name": "method", "type": "string", "required": true, "options": ["syringe", "vacuum", "gravity"]}
+      ],
+      "example": "FILTER(0.22, \"µm\", method=\"syringe\")"
+    },
+    {
+      "id": 10,
+      "name": "GRIND",
+      "category": "PHYSICAL_MANIPULATION",
+      "parameters": [
+        {"name": "sample_type", "type": "string", "required": true},
+        {"name": "method", "type": "string", "required": true, "options": ["mortar_pestle", "homogenizer", "bead_beater"]},
+        {"name": "state", "type": "string", "required": true, "options": ["frozen", "fresh", "dried"]},
+        {"name": "target_consistency", "type": "string", "required": true, "options": ["powder", "paste", "suspension"]}
+      ],
+      "example": "GRIND(\"leaf tissue\", method=\"mortar_pestle\", state=\"frozen\", target=\"powder\")"
+    },
+    {
+      "id": 11,
+      "name": "TRANSFER",
+      "category": "PHYSICAL_MANIPULATION",
+      "parameters": [
+        {"name": "source_container", "type": "string", "required": true},
+        {"name": "destination_container", "type": "string", "required": true},
+        {"name": "volume", "type": "mixed", "required": true, "options": ["number + unit", "all", "supernatant", "upper_phase"]},
+        {"name": "method", "type": "string", "required": true, "options": ["pipette", "pour", "decant"]}
+      ],
+      "example": "TRANSFER(\"tube1\", \"tube2\", \"upper_phase\", method=\"pipette\")"
+    },
+    {
+      "id": 12,
+      "name": "MEASURE",
+      "category": "MEASUREMENT_OPERATIONS",
+      "parameters": [
+        {"name": "measurement_type", "type": "string", "required": true, "options": ["OD", "pH", "concentration", "weight", "volume"]},
+        {"name": "device", "type": "string", "required": true, "options": ["spectrophotometer", "pH_meter", "nanodrop", "scale"]},
+        {"name": "wavelength", "type": "number", "required": false},
+        {"name": "record_as", "type": "string", "required": true}
+      ],
+      "example": "MEASURE(\"OD\", device=\"spectrophotometer\", wavelength=600, record_as=\"culture_OD\")"
+    },
+    {
+      "id": 13,
+      "name": "ADJUST",
+      "category": "MEASUREMENT_OPERATIONS",
+      "parameters": [
+        {"name": "parameter", "type": "string", "required": true, "options": ["pH", "concentration", "volume", "OD"]},
+        {"name": "target_value", "type": "number", "required": true},
+        {"name": "adjustment_substance", "type": "string", "required": true},
+        {"name": "method", "type": "string", "required": true, "options": ["dropwise", "calculated_addition"]}
+      ],
+      "example": "ADJUST(\"pH\", 5.5, adjustment_substance=\"NaOH\", method=\"dropwise\")"
+    },
+    {
+      "id": 14,
+      "name": "INCUBATE",
+      "category": "TIME_OPERATIONS",
+      "parameters": [
+        {"name": "duration", "type": "mixed", "required": true, "options": ["number + unit", "overnight"]},
+        {"name": "conditions", "type": "string", "required": true, "options": ["static", "shaking", "dark", "light"]},
+        {"name": "temperature", "type": "number + °C", "required": true},
+        {"name": "rpm", "type": "number", "required": false}
+      ],
+      "example": "INCUBATE(\"overnight\", conditions=\"shaking\", temperature=28, rpm=200)"
+    },
+    {
+      "id": 15,
+      "name": "WAIT",
+      "category": "TIME_OPERATIONS",
+      "parameters": [
+        {"name": "duration", "type": "number + unit", "required": true},
+        {"name": "purpose", "type": "string", "required": false}
+      ],
+      "example": "WAIT(5, \"min\", purpose=\"let bubbles settle\")"
+    },
+    {
+      "id": 16,
+      "name": "WASH",
+      "category": "WASHING_OPERATIONS",
+      "parameters": [
+        {"name": "wash_solution", "type": "string", "required": true},
+        {"name": "volume", "type": "number + unit", "required": true},
+        {"name": "repetitions", "type": "number", "required": true},
+        {"name": "removal_method", "type": "string", "required": true, "options": ["aspirate", "decant", "pipette"]}
+      ],
+      "example": "WASH(\"70% ethanol\", 500, \"µL\", repetitions=2, removal_method=\"aspirate\")"
+    },
+    {
+      "id": 17,
+      "name": "DRY",
+      "category": "DRYING_OPERATIONS",
+      "parameters": [
+        {"name": "method", "type": "string", "required": true, "options": ["air_dry", "vacuum_dry", "speed_vac"]},
+        {"name": "duration", "type": "number + unit", "required": true},
+        {"name": "temperature", "type": "number + °C", "required": false}
+      ],
+      "example": "DRY(\"air_dry\", 15, \"min\", temperature=37)"
+    },
+    {
+      "id": 18,
+      "name": "USE_EQUIPMENT",
+      "category": "SPECIALIZED_EQUIPMENT_OPERATIONS",
+      "parameters": [
+        {"name": "equipment", "type": "string", "required": true, "options": ["thermocycler", "vacuum_pump", "sonicator", "electroporator"]},
+        {"name": "program/settings", "type": "string or dict", "required": true},
+        {"name": "duration", "type": "number + unit", "required": false}
+      ],
+      "example": "USE_EQUIPMENT(\"thermocycler\", program=\"golden_gate\", cycles=25)"
+    },
+    {
+      "id": 19,
+      "name": "APPLY_VACUUM",
+      "category": "SPECIALIZED_EQUIPMENT_OPERATIONS",
+      "parameters": [
+        {"name": "pressure", "type": "number + unit", "required": true, "units": ["kPa", "bar"]},
+        {"name": "duration", "type": "number + unit", "required": true},
+        {"name": "release_speed", "type": "string", "required": true, "options": ["slow", "fast"]}
+      ],
+      "example": "APPLY_VACUUM(-70, \"kPa\", 10, \"min\", release_speed=\"slow\")"
+    },
+    {
+      "id": 20,
+      "name": "CALCULATE",
+      "category": "CALCULATION_OPERATIONS",
+      "parameters": [
+        {"name": "formula", "type": "string expression", "required": true},
+        {"name": "input_variables", "type": "dict", "required": true},
+        {"name": "output_variable", "type": "string", "required": true},
+        {"name": "unit", "type": "string", "required": true}
+      ],
+      "example": "CALCULATE(\"(c1 * v1) / c2\", {c1: \"culture_OD\", v1: 100, c2: 0.7}, output=\"volume_needed\", unit=\"mL\")"
+    },
+    {
+      "id": 21,
+      "name": "INOCULATE",
+      "category": "BIOLOGICAL_OPERATIONS",
+      "parameters": [
+        {"name": "source", "type": "string", "required": true, "options": ["colony", "glycerol_stock", "culture"]},
+        {"name": "destination_medium", "type": "string", "required": true},
+        {"name": "volume", "type": "mixed", "required": true, "options": ["number + unit", "single_colony", "loop", "tip"]},
+        {"name": "dilution_ratio", "type": "string", "required": false}
+      ],
+      "example": "INOCULATE(\"glycerol_stock\", \"LB+antibiotics\", method=\"tip\")"
+    },
+    {
+      "id": 22,
+      "name": "PLATE",
+      "category": "BIOLOGICAL_OPERATIONS",
+      "parameters": [
+        {"name": "volume", "type": "number + unit", "required": true},
+        {"name": "plate_type", "type": "string", "required": true},
+        {"name": "spreading_method", "type": "string", "required": true, "options": ["spread", "streak", "pour"]}
+      ],
+      "example": "PLATE(100, \"µL\", plate_type=\"LB+kan\", method=\"spread\")"
+    },
+    {
+      "id": 23,
+      "name": "TRANSFORM",
+      "category": "BIOLOGICAL_OPERATIONS",
+      "parameters": [
+        {"name": "cells_type", "type": "string", "required": true},
+        {"name": "dna_volume", "type": "number + unit", "required": true},
+        {"name": "method", "type": "string", "required": true, "options": ["heat_shock", "electroporation", "chemical"]},
+        {"name": "recovery_time", "type": "number + unit", "required": true}
+      ],
+      "example": "TRANSFORM(\"competent_cells\", 5, \"µL\", method=\"heat_shock\", recovery=1, \"h\")"
+    },
+    {
+      "id": 24,
+      "name": "OBSERVE",
+      "category": "OBSERVATION_OPERATIONS",
+      "parameters": [
+        {"name": "observation_type", "type": "string", "required": true, "options": ["color_change", "precipitation", "growth", "fluorescence"]},
+        {"name": "expected_result", "type": "string", "required": false},
+        {"name": "record", "type": "boolean", "required": true}
+      ],
+      "example": "OBSERVE(\"fluorescence\", expected=\"GFP expression\", record=true)"
+    },
+    {
+      "id": 25,
+      "name": "CHECK_POINT",
+      "category": "OBSERVATION_OPERATIONS",
+      "parameters": [
+        {"name": "condition", "type": "string expression", "required": true},
+        {"name": "pass_action", "type": "string", "required": true, "options": ["continue", "proceed_to_step"]},
+        {"name": "fail_action", "type": "string", "required": true, "options": ["repeat", "stop", "adjust"]}
+      ],
+      "example": "CHECK_POINT(\"OD >= 0.6\", pass=\"continue\", fail=\"wait_and_remeasure\")"
+    },
+    {
+      "id": 26,
+      "name": "SAFETY_STEP",
+      "category": "SAFETY_OPERATIONS",
+      "parameters": [
+        {"name": "equipment", "type": "string", "required": true, "options": ["gloves", "goggles", "fume_hood", "biosafety_cabinet"]},
+        {"name": "action", "type": "string", "required": true, "options": ["wear", "use", "work_in"]}
+      ],
+      "example": "SAFETY_STEP(\"fume_hood\", \"work_in\")"
+    },
+    {
+      "id": 27,
+      "name": "MANUAL_STEP",
+      "category": "UNIVERSAL_MANUAL_OPERATION",
+      "parameters": [
+        {"name": "description", "type": "free text string", "required": true},
+        {"name": "duration", "type": "estimated time", "required": false},
+        {"name": "critical", "type": "boolean", "required": true},
+        {"name": "image", "type": "reference image path", "required": false},
+        {"name": "video", "type": "reference video path", "required": false},
+        {"name": "notes", "type": "additional tips/warnings", "required": false}
+      ],
+      "example": "MANUAL_STEP(description=\"Using a syringe, carefully infiltrate...\", duration=\"5 min per frond\", critical=true, notes=\"Too much pressure damages tissue...\")"
+    },
+    {
+      "id": 28,
+      "name": "SEPARATE_PHASES",
+      "category": "PHASE_SEPARATION_OPERATIONS",
+      "parameters": [
+        {"name": "mixture_type", "type": "string", "required": true, "options": ["aqueous_organic", "oil_water", "emulsion"]},
+        {"name": "expected_phases", "type": "number", "required": true},
+        {"name": "target_phase", "type": "string", "required": true, "options": ["upper", "lower", "interphase", "aqueous", "organic"]},
+        {"name": "caution_notes", "type": "string", "required": true},
+        {"name": "validation_method", "type": "string", "required": true, "options": ["visual", "marker_dye"]}
+      ],
+      "example": "SEPARATE_PHASES(mixture_type: \"aqueous_organic\", expected_phases: 2, target_phase: \"upper\", caution_notes: \"Do not disturb interphase!\", validation_method: \"visual\")"
+    },
+    {
+      "id": 29,
+      "name": "VISUALIZE_PELLET",
+      "category": "VISUALIZATION_OPERATIONS",
+      "parameters": [
+        {"name": "expected_appearance", "type": "string", "required": true},
+        {"name": "method", "type": "string", "required": true, "options": ["swirl", "visual_inspection", "UV_light", "microscope"]},
+        {"name": "timeout", "type": "number + unit", "required": true},
+        {"name": "troubleshooting_notes", "type": "string", "required": true}
+      ],
+      "example": "VISUALIZE_PELLET(expected_appearance: \"white DNA fibers\", method: \"swirl\", timeout: \"15 min\", troubleshooting_notes: \"If no fibers appear, leave on ice longer\")"
+    },
+    {
+      "id": 30,
+      "name": "SCALE_VOLUMES",
+      "category": "SCALING_OPERATIONS",
+      "parameters": [
+        {"name": "scale_factor", "type": "number", "required": true},
+        {"name": "reference_step", "type": "string", "required": true},
+        {"name": "adjust_subsequent", "type": "boolean", "required": true},
+        {"name": "calculation_method", "type": "string", "required": true, "options": ["linear", "proportional", "custom"]}
+      ],
+      "example": "SCALE_VOLUMES(scale_factor: 2, reference_step: \"CTAB_volume\", adjust_subsequent: true, calculation_method: \"proportional\")"
+    },
+    {
+      "id": 31,
+      "name": "CRITICAL_TRANSFER",
+      "category": "CRITICAL_TRANSFER_OPERATIONS",
+      "parameters": [
+        {"name": "source", "type": "string", "required": true},
+        {"name": "destination", "type": "string", "required": true},
+        {"name": "phase", "type": "string", "required": true, "options": ["upper", "lower", "aqueous", "organic", "supernatant", "pellet"]},
+        {"name": "avoidance_zone", "type": "string", "required": true, "options": ["interphase", "pellet", "debris"]},
+        {"name": "fallback_action", "type": "string", "required": true, "options": ["repeat", "discard", "adjust_technique"]},
+        {"name": "precision_required", "type": "string", "required": true, "options": ["high", "medium", "low"]}
+      ],
+      "example": "CRITICAL_TRANSFER(source: \"tube1\", destination: \"tube2\", phase: \"upper\", avoidance_zone: \"interphase\", fallback_action: \"repeat_centrifugation\", precision_required: \"high\")"
+    },
+    {
+      "id": 32,
+      "name": "STORE_OVERNIGHT",
+      "category": "EXTENDED_STORAGE_OPERATIONS",
+      "parameters": [
+        {"name": "temperature", "type": "number + °C", "required": true},
+        {"name": "container", "type": "string", "required": true},
+        {"name": "protective_measures", "type": "string", "required": false, "options": ["wrap_in_foil", "parafilm", "vacuum_seal"]},
+        {"name": "stability_notes", "type": "string", "required": false}
+      ],
+      "example": "STORE_OVERNIGHT(temperature: -20, container: \"2mL tube\", protective_measures: \"none\", stability_notes: \"Stable for up to 1 month\")"
+    },
+    {
+      "id": 33,
+      "name": "HAZARD_WARNING",
+      "category": "HAZARD_AWARENESS_OPERATIONS",
+      "parameters": [
+        {"name": "hazard_type", "type": "string", "required": true, "options": ["chemical", "biological", "physical"]},
+        {"name": "severity", "type": "string", "required": true, "options": ["low", "medium", "high", "extreme"]},
+        {"name": "protective_equipment", "type": "list", "required": true},
+        {"name": "ventilation_required", "type": "boolean", "required": true}
+      ],
+      "example": "HAZARD_WARNING(hazard_type: \"chemical\", severity: \"high\", protective_equipment: [\"gloves\", \"goggles\", \"lab_coat\"], ventilation_required: true)"
+    },
+    {
+      "id": 34,
+      "name": "SUBCULTURE_PLANTS",
+      "category": "PLANT_CULTURE_OPERATIONS",
+      "parameters": [
+        {"name": "plant_species", "type": "string", "required": true},
+        {"name": "source_density", "type": "percentage", "required": true},
+        {"name": "target_density", "type": "percentage", "required": true},
+        {"name": "medium_type", "type": "string", "required": true},
+        {"name": "container", "type": "string", "required": true, "options": ["tray", "pot", "plate"]},
+        {"name": "growth_conditions", "type": "string", "required": true}
+      ],
+      "example": "SUBCULTURE_PLANTS(plant_species: \"duckweed\", source_density: 75, target_density: 50, medium_type: \"DF base\", container: \"tray\", growth_conditions: \"16/8 photoperiod, 25°C\")"
+    },
+    {
+      "id": 35,
+      "name": "SELECT_PLANT_MATERIAL",
+      "category": "PLANT_SELECTION_OPERATIONS",
+      "parameters": [
+        {"name": "criteria", "type": "string", "required": true, "options": ["confluence", "age", "health_status", "developmental_stage"]},
+        {"name": "target_confluence", "type": "percentage", "required": true},
+        {"name": "quality_notes", "type": "string", "required": true}
+      ],
+      "example": "SELECT_PLANT_MATERIAL(criteria: \"confluence\", target_confluence: \"50-75%\", quality_notes: \"Fast-dividing fronds on fresh media\")"
+    },
+    {
+      "id": 36,
+      "name": "PRE_TREAT_PLANTS",
+      "category": "PLANT_PRE_TREATMENT_OPERATIONS",
+      "parameters": [
+        {"name": "treatment_solution", "type": "string", "required": true},
+        {"name": "concentration", "type": "number + unit", "required": true},
+        {"name": "temperature", "type": "number + °C", "required": true},
+        {"name": "duration", "type": "number + unit", "required": true},
+        {"name": "method", "type": "string", "required": true, "options": ["submersion", "spraying", "vacuum_infiltration"]}
+      ],
+      "example": "PRE_TREAT_PLANTS(treatment_solution: \"L-glutamine\", concentration: 20, \"mg/L\", temperature: 4, duration: 20, \"min\", method: \"submersion\")"
+    },
+    {
+      "id": 37,
+      "name": "INFILTRATE_PLANTS",
+      "category": "PLANT_INFILTRATION_OPERATIONS",
+      "parameters": [
+        {"name": "infiltration_method", "type": "string", "required": true, "options": ["vacuum", "syringe", "agitation"]},
+        {"name": "pressure", "type": "number + unit", "required": false},
+        {"name": "duration", "type": "number + unit", "required": true},
+        {"name": "solution_volume", "type": "number + unit", "required": true},
+        {"name": "target_tissue", "type": "string", "required": true},
+        {"name": "visual_cues", "type": "string", "required": true}
+      ],
+      "example": "INFILTRATE_PLANTS(infiltration_method: \"vacuum\", pressure: -70, \"kPa\", duration: 10, \"min\", solution_volume: 5, \"mL\", target_tissue: \"dorsal stomata\", visual_cues: \"darker and translucent tissue\")"
+    },
+    {
+      "id": 38,
+      "name": "PREPARE_AGROBACTERIUM",
+      "category": "TRANSFORMATION_SPECIFIC_OPERATIONS",
+      "parameters": [
+        {"name": "strain", "type": "string", "required": true},
+        {"name": "pre_culture_volume", "type": "number + unit", "required": true},
+        {"name": "target_OD", "type": "number", "required": true},
+        {"name": "dilution_strategy", "type": "string", "required": true, "options": ["ratio", "calculated"]},
+        {"name": "growth_conditions", "type": "string", "required": true}
+      ],
+      "example": "PREPARE_AGROBACTERIUM(strain: \"Sp7428\", pre_culture_volume: 100, \"mL\", target_OD: 0.6, dilution_strategy: \"1:500\", growth_conditions: \"28°C, 200rpm\")"
+    },
+    {
+      "id": 39,
+      "name": "CO_CULTIVATE",
+      "category": "CO_CULTIVATION_OPERATIONS",
+      "parameters": [
+        {"name": "duration", "type": "number + unit or days", "required": true},
+        {"name": "temperature", "type": "number + °C", "required": true},
+        {"name": "light_conditions", "type": "string", "required": true},
+        {"name": "medium_type", "type": "string", "required": true},
+        {"name": "sealing_method", "type": "string", "required": true, "options": ["sealed", "unsealed"]}
+      ],
+      "example": "CO_CULTIVATE(duration: 48, \"hours\", temperature: 25, light_conditions: \"16/8 photoperiod, 200 µmoles/m²/s\", medium_type: \"DF base\", sealing_method: \"unsealed\")"
+    },
+    {
+      "id": 40,
+      "name": "MONITOR_EXPRESSION",
+      "category": "EXPRESSION_MONITORING_OPERATIONS",
+      "parameters": [
+        {"name": "time_points", "type": "list of days or hours", "required": true},
+        {"name": "evaluation_method", "type": "string", "required": true, "options": ["microscopy", "visual", "fluorescence"]},
+        {"name": "expected_pattern", "type": "string", "required": true},
+        {"name": "recording_method", "type": "string", "required": true, "options": ["images", "notes", "quantitative"]}
+      ],
+      "example": "MONITOR_EXPRESSION(time_points: [6, 12, 18], \"days\", evaluation_method: \"fluorescence microscopy\", expected_pattern: \"GFP expression in transformed tissues\", recording_method: \"images and notes\")"
+    },
+    {
+      "id": 41,
+      "name": "MAINTAIN_STERILITY",
+      "category": "STERILE_TECHNIQUE_OPERATIONS",
+      "parameters": [
+        {"name": "environment", "type": "string", "required": true, "options": ["flow_hood", "open_bench", "fire"]},
+        {"name": "requirements", "type": "string", "required": true, "options": ["sterile", "non_sterile"]},
+        {"name": "precautions", "type": "string", "required": false}
+      ],
+      "example": "MAINTAIN_STERILITY(environment: \"flow_hood\", requirements: \"sterile\", precautions: \"flame sterilization of tools\")"
+    },
+    {
+      "id": 42,
+      "name": "WASH_PLANTS",
+      "category": "PLANT_WASHING_OPERATIONS",
+      "parameters": [
+        {"name": "wash_solution", "type": "string", "required": true},
+        {"name": "method", "type": "string", "required": true, "options": ["stirring", "submersion", "aspiration"]},
+        {"name": "repetitions", "type": "number", "required": true},
+        {"name": "drying_method", "type": "string", "required": true, "options": ["air_dry", "blot", "aspirate"]}
+      ],
+      "example": "WASH_PLANTS(wash_solution: \"dH2O\", method: \"stirring\", repetitions: 1, drying_method: \"aspirate\")"
+    },
+    {
+      "id": 43,
+      "name": "SETUP_ASSEMBLY_REACTION",
+      "category": "MOLECULAR_CLONING_OPERATIONS",
+      "parameters": [
+        {"name": "assembly_type", "type": "string", "required": true, "options": ["GoldenGate", "Gibson", "MoClo", "SLIC", "Gateway"]},
+        {"name": "vector_type", "type": "string", "required": true},
+        {"name": "insert_count", "type": "number", "required": true},
+        {"name": "molar_ratio", "type": "string", "required": true},
+        {"name": "total_volume", "type": "number + unit", "required": true},
+        {"name": "enzyme_system", "type": "string", "required": true}
+      ],
+      "example": "SETUP_ASSEMBLY_REACTION(assembly_type: \"MoClo\", vector_type: \"Level 1\", insert_count: 3, molar_ratio: \"1:3\", total_volume: 15, \"µL\", enzyme_system: \"BsaI/T4 ligase\")"
+    },
+    {
+      "id": 44,
+      "name": "CALCULATE_MOLAR_RATIOS",
+      "category": "MOLECULAR_CLONING_OPERATIONS",
+      "parameters": [
+        {"name": "vector_length", "type": "number", "required": true, "units": ["bp"]},
+        {"name": "insert_lengths", "type": "array of numbers", "required": true},
+        {"name": "target_vector_mass", "type": "number + unit", "required": true},
+        {"name": "molar_ratio", "type": "string", "required": true},
+        {"name": "output_variables", "type": "dict", "required": true}
+      ],
+      "example": "CALCULATE_MOLAR_RATIOS(vector_length: 650, insert_lengths: [800, 750], target_vector_mass: 100, \"ng\", molar_ratio: \"1:3\", output_variables: {\"vector_volume\": \"x_ul\", \"insert_volumes\": [\"x_ul\", \"x_ul\"]})"
+    },
+    {
+      "id": 45,
+      "name": "RUN_THERMOCYCLER_PROGRAM",
+      "category": "MOLECULAR_CLONING_OPERATIONS",
+      "parameters": [
+        {"name": "program_name", "type": "string", "required": true},
+        {"name": "cycles", "type": "array of objects", "required": true},
+        {"name": "final_steps", "type": "array of objects", "required": true},
+        {"name": "hold_temperature", "type": "number + °C", "required": false}
+      ],
+      "example": "RUN_THERMOCYCLER_PROGRAM(program_name: \"MoClo Assembly\", cycles: [{temperature: 37, \"°C\", duration: 3, \"min\", repetitions: 25}, {temperature: 16, \"°C\", duration: 4, \"min\", repetitions: 25}], final_steps: [{temperature: 50, \"°C\", duration: 5, \"min\"}, {temperature: 80, \"°C\", duration: 5, \"min\"}], hold_temperature: 4, \"°C\")"
+    },
+    {
+      "id": 46,
+      "name": "ADD_RESTRICTION_ENZYME",
+      "category": "MOLECULAR_CLONING_OPERATIONS",
+      "parameters": [
+        {"name": "enzyme_name", "type": "string", "required": true},
+        {"name": "volume", "type": "number + unit", "required": true},
+        {"name": "buffer_compatibility", "type": "string", "required": true},
+        {"name": "application", "type": "string", "required": true, "options": ["digestion", "assembly", "golden_gate"]}
+      ],
+      "example": "ADD_RESTRICTION_ENZYME(enzyme_name: \"BsaI\", volume: 1, \"µL\", buffer_compatibility: \"T4 buffer\", application: \"golden_gate\")"
+    },
+    {
+      "id": 47,
+      "name": "SETUP_LIGATION",
+      "category": "MOLECULAR_CLONING_OPERATIONS",
+      "parameters": [
+        {"name": "ligase_type", "type": "string", "required": true},
+        {"name": "volume", "type": "number + unit", "required": true},
+        {"name": "buffer", "type": "string", "required": true},
+        {"name": "atp_concentration", "type": "string", "required": false}
+      ],
+      "example": "SETUP_LIGATION(ligase_type: \"T4 DNA ligase\", volume: 0.5, \"µL\", buffer: \"10x T4 buffer\", atp_concentration: \"1mM\")"
+    },
+    {
+      "id": 48,
+      "name": "DEFINE_ASSEMBLY_LEVEL",
+      "category": "MOLECULAR_CLONING_OPERATIONS",
+      "parameters": [
+        {"name": "level", "type": "string", "required": true, "options": ["Level 0", "Level 1", "Level 2", "Level M", "etc"]},
+        {"name": "enzyme_for_level", "type": "string", "required": true},
+        {"name": "compatibility_rules", "type": "array", "required": false}
+      ],
+      "example": "DEFINE_ASSEMBLY_LEVEL(level: \"Level 1\", enzyme_for_level: \"BsaI\", compatibility_rules: [\"accepts Level 0 parts\", \"creates transcriptional units\"])"
+    }
+  ],
+  "metadata": {
+    "total_operations": 48,
+    "categories": [
+      "SUBSTANCE_OPERATIONS",
+      "TEMPERATURE_OPERATIONS", 
+      "MIXING_OPERATIONS",
+      "SEPARATION_OPERATIONS",
+      "PHYSICAL_MANIPULATION",
+      "MEASUREMENT_OPERATIONS",
+      "TIME_OPERATIONS",
+      "WASHING_OPERATIONS",
+      "DRYING_OPERATIONS",
+      "SPECIALIZED_EQUIPMENT_OPERATIONS",
+      "CALCULATION_OPERATIONS",
+      "BIOLOGICAL_OPERATIONS",
+      "OBSERVATION_OPERATIONS",
+      "SAFETY_OPERATIONS",
+      "UNIVERSAL_MANUAL_OPERATION",
+      "PHASE_SEPARATION_OPERATIONS",
+      "VISUALIZATION_OPERATIONS",
+      "SCALING_OPERATIONS",
+      "CRITICAL_TRANSFER_OPERATIONS",
+      "EXTENDED_STORAGE_OPERATIONS",
+      "HAZARD_AWARENESS_OPERATIONS",
+      "PLANT_CULTURE_OPERATIONS",
+      "PLANT_SELECTION_OPERATIONS",
+      "PLANT_PRE_TREATMENT_OPERATIONS",
+      "PLANT_INFILTRATION_OPERATIONS",
+      "TRANSFORMATION_SPECIFIC_OPERATIONS",
+      "CO_CULTIVATION_OPERATIONS",
+      "EXPRESSION_MONITORING_OPERATIONS",
+      "STERILE_TECHNIQUE_OPERATIONS",
+      "PLANT_WASHING_OPERATIONS",
+      "MOLECULAR_CLONING_OPERATIONS"
+    ],
+    "version": "2.0",
+    "last_updated": "2024-01-01",
+    "coverage_verified": true,
+    "verified_protocols": [
+      "CTAB DNA Isolation",
+      "Duckweed Transient Expression", 
+      "SHORTY DNA Isolation",
+      "MoClo Assembly"
+    ],
+    "protocol_coverage": {
+      "basic_molecular_biology": "100%",
+      "plant_transformation": "100%", 
+      "dna_extraction": "100%",
+      "golden_gate_assembly": "100%",
+      "molecular_cloning": "100%"
+    }
+  }
+}
